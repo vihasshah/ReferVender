@@ -1,6 +1,7 @@
 package in.indianstreets.refervender;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,7 +52,7 @@ import jxl.write.WriteException;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final int SETTINGS_LOCATION_REQUEST_CODE = 2;
-    private static final int STORAGE_REQUEST_CODE = 3 ;
+    private static final int STORAGE_REQUEST_CODE = 3;
     EditText nameET, mobileET, cityET, streetET, pincodeET, stateET, messageET, latitudeET, logitudeEt, subCategoryEt;
     Spinner categorySpn;
     Button savebtn;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String selectedCategory;
     LocationRequest locationRequest;
     ArrayList<GPSModel> venderModelArrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,14 +127,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_REQUEST_CODE);
-        }else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+        } else {
             getLocation();
         }
 
     }
 
-    private LocationRequest getLocationRequest(){
+    private LocationRequest getLocationRequest() {
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1500L);
         locationRequest.setFastestInterval(1000L);
@@ -142,12 +144,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void getLocation() {
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             // getting location form gp provider
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, getLocationRequest(), new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    if(location!=null){
+                    if (location != null) {
                         mLastLocation = location;
                     }
                 }
